@@ -1,0 +1,12 @@
+{application, sip_codec,
+ [{description, "Ragel-based SIP codec"},
+  {vsn, "1.0.0"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+  {links, []}
+ ]}.

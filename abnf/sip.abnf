@@ -1,0 +1,27 @@
+SIP-message    =  Request / Response
+Request        =  Request-Line
+                  *( message-header )
+                  CRLF
+                  [ message-body ]
+Request-Line   =  Method SP Request-URI SP SIP-Version CRLF
+Request-URI    =  SIP-URI / SIPS-URI / telephone-uri
+SIP-Version    =  "SIP" "/" 1*DIGIT "." 1*DIGIT
+Method         =  extension-method
+extension-method  =  token
+Response          =  Status-Line
+                     *( message-header )
+                     CRLF
+                     [ message-body ]
+
+Status-Line     =  SIP-Version SP Status-Code SP Reason-Phrase CRLF
+Status-Code     =  extension-code
+extension-code  =  3DIGIT
+Reason-Phrase   =  *(reserved / unreserved / escaped
+                   / UTF8-NONASCII / UTF8-CONT / SP / HTAB)
+generic-param = token [ EQUAL gen-value ]
+gen-value = token / host / quoted-string
+message-header =  (extension-header) CRLF
+extension-header  =  header-name HCOLON header-value
+header-name       =  token
+header-value      =  *(TEXT-UTF8char / UTF8-CONT / LWS)
+message-body  =  *OCTET

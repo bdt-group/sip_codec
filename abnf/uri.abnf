@@ -1,0 +1,47 @@
+SIP-URI          =  "sip:" [ userinfo ] hostport
+                    uri-parameters [ headers ]
+SIPS-URI         =  "sips:" [ userinfo ] hostport
+                    uri-parameters [ headers ]
+telephone-uri    = "tel:" telephone-subscriber
+userinfo         =  ( user / telephone-subscriber ) [ ":" password ] "@"
+user             =  1*( unreserved / escaped / user-unreserved )
+user-unreserved  =  "&" / "=" / "+" / "$" / "," / ";" / "?" / "/"
+password         =  *( unreserved / escaped /
+                    "&" / "=" / "+" / "$" / "," )
+hostport         =  host [ ":" port ]
+host             =  hostname / IPv4address / IPv6reference
+hostname         =  *( domainlabel "." ) toplabel [ "." ]
+domainlabel      =  alphanum
+                    / alphanum *( alphanum / "-" ) alphanum
+toplabel         =  ALPHA / ALPHA *( alphanum / "-" ) alphanum
+IPv6reference  =  "[" IPv6address "]"
+IPv6address    =  hexpart [ ":" IPv4address ]
+IPv4address    =  1*3DIGIT "." 1*3DIGIT "." 1*3DIGIT "." 1*3DIGIT
+hexpart        =  hexseq / hexseq "::" [ hexseq ] / "::" [ hexseq ]
+hexseq         =  hex4 *( ":" hex4)
+hex4           =  1*4HEXDIG
+port           =  1*DIGIT
+uri-parameters    =  *( ";" uri-parameter)
+uri-parameter     =  other-param
+other-param       =  pname [ "=" pvalue ]
+pname             =  1*paramchar
+pvalue            =  1*paramchar
+paramchar         =  param-unreserved / unreserved / escaped
+param-unreserved  =  "[" / "]" / "/" / ":" / "&" / "+" / "$"
+
+headers         =  "?" header *( "&" header )
+header          =  hname "=" hvalue
+hname           =  1*( hnv-unreserved / unreserved / escaped )
+hvalue          =  *( hnv-unreserved / unreserved / escaped )
+hnv-unreserved  =  "[" / "]" / "/" / "?" / ":" / "+" / "$"
+
+telephone-subscriber = ["+"] 1*(phonedigit-hex) *parameter
+parameter            = ";" tel-pname ["=" tel-pvalue ]
+tel-pname            = 1*( alphanum / "-" )
+tel-pvalue           = 1*tel-paramchar
+tel-paramchar        = param-unreserved / unreserved / pct-encoded
+pct-encoded          = "%" HEXDIG HEXDIG
+phonedigit           = DIGIT / [ visual-separator ]
+phonedigit-hex       = HEXDIG / "*" / "#" / [ visual-separator ]
+visual-separator     = "-" / "." / "(" / ")"
+uric                 = reserved / unreserved / pct-encoded
