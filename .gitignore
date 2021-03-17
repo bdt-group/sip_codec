@@ -21,5 +21,6 @@ rebar3.crashdump
 *~
 priv
 sip_parser.c
+sip.rl
 deploy.config
 /artefacts/

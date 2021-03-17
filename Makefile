@@ -1,12 +1,12 @@
 REBAR ?= rebar3
 PROJECT := sip_codec
-BUILD_IMAGE  ?= gitlab.bdt.tools:5000/build-ubuntu1804:1.4.5
+BUILD_IMAGE  ?= gitlab.bdt.tools:5000/build-ubuntu1804:1.4.6
 
-.PHONY: compile clean distclean xref dialyzer dialyze linter lint test check-syntax
+.PHONY: compile clean distclean xref dialyzer dialyze linter lint test check-syntax parser
 
 all: compile
 
-compile: ragel
+compile: parser
 	@$(REBAR) compile
 
 clean:
@@ -34,8 +34,8 @@ test:
 check-syntax:
 	make -C c_src check-syntax
 
-ragel:
-	make -C c_src ragel
+parser:
+	make -C c_src parser
 
 .PHONY: d_%
 

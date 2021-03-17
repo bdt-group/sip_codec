@@ -38,7 +38,9 @@ link_verbose = $(link_verbose_$(V))
 SOURCES := $(shell find $(C_SRC_DIR) -type f \( -name "*.c" -o -name "*.C" -o -name "*.cc" -o -name "*.cpp" \))
 HEADERS := $(shell find $(C_SRC_DIR) -type f -name "*.h")
 OBJECTS = $(addsuffix .o, $(basename $(SOURCES)))
+ABNF_FILES = $(wildcard $(CURDIR)/../abnf/*.abnf)
 RAGEL_OUTPUT = sip_parser.c
+ABNFC_OUTPUT = sip.rl
 GCOV_OUTPUT = $(wildcard *.gcda) \
               $(wildcard *.gcno) \
               $(wildcard *.gcov)
@@ -51,7 +53,7 @@ $(C_SRC_OUTPUT): $(SOURCES) $(HEADERS)
 	$(COMPILE_C) -o $(C_SRC_OUTPUT) $(SOURCES) $(LDFLAGS) $(LDLIBS)
 
 clean:
-	@rm -rf $(C_SRC_OUTPUT) $(OBJECTS) $(GCOV_OUTPUT) $(LCOV_OUTPUT) $(RAGEL_OUTPUT)
+	@rm -rf $(C_SRC_OUTPUT) $(OBJECTS) $(GCOV_OUTPUT) $(LCOV_OUTPUT) $(RAGEL_OUTPUT) $(ABNFC_OUTPUT)
 
 check-syntax:
 	gcc $(CFLAGS) -Wextra -fsyntax-only $(CHK_SOURCES)
@@ -60,6 +62,7 @@ cover: clean
         # Compiling into goto-driven FSM is very taxing under `test-coverage`
         # and takes ages to complete, so we recompile into table-driven FSM
         # which is slower but compiles much faster
+	abnfc core $(ABNF_FILES) -i -n sip -o $(ABNFC_OUTPUT)
 	ragel -T0 sip_parser.rl -o $(RAGEL_OUTPUT)
 	$(COMPILE_C) -fprofile-arcs -ftest-coverage -o $(C_SRC_OUTPUT) $(SOURCES) $(LDFLAGS) $(LDLIBS)
 
@@ -69,9 +72,12 @@ cover-analyze:
 	genhtml coverage/coverage.info --output-directory coverage
 	lcov --list coverage/coverage.info
 
-ragel: $(RAGEL_OUTPUT)
+parser: $(ABNFC_OUTPUT) $(RAGEL_OUTPUT)
+
+$(ABNFC_OUTPUT): $(ABNF_FILES)
+	abnfc core $(ABNF_FILES) -i -n sip -o $(ABNFC_OUTPUT)
 
 $(RAGEL_OUTPUT): sip_parser.rl sip_uri.rl sip_params.rl sip.rl
 	ragel -G2 sip_parser.rl -o $(RAGEL_OUTPUT)
 
-.PHONY: clean check-syntax cover cover-analyze ragel
+.PHONY: clean check-syntax cover cover-analyze parser
