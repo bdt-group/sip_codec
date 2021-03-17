@@ -38,9 +38,10 @@ link_verbose = $(link_verbose_$(V))
 SOURCES := $(shell find $(C_SRC_DIR) -type f \( -name "*.c" -o -name "*.C" -o -name "*.cc" -o -name "*.cpp" \))
 HEADERS := $(shell find $(C_SRC_DIR) -type f -name "*.h")
 OBJECTS = $(addsuffix .o, $(basename $(SOURCES)))
-GCOV_OUTPUT = $(addsuffix .gcda, $(basename $(SOURCES))) \
-	      $(addsuffix .gcno, $(basename $(SOURCES))) \
-              $(addsuffix .gcov, $(basename $(SOURCES)))
+RAGEL_OUTPUT = sip_parser.c
+GCOV_OUTPUT = $(wildcard *.gcda) \
+              $(wildcard *.gcno) \
+              $(wildcard *.gcov)
 LCOV_OUTPUT = coverage
 
 COMPILE_C = $(c_verbose) $(CC) $(CFLAGS)
@@ -50,22 +51,27 @@ $(C_SRC_OUTPUT): $(SOURCES) $(HEADERS)
 	$(COMPILE_C) -o $(C_SRC_OUTPUT) $(SOURCES) $(LDFLAGS) $(LDLIBS)
 
 clean:
-	@rm -rf $(C_SRC_OUTPUT) $(OBJECTS) $(GCOV_OUTPUT) $(LCOV_OUTPUT)
+	@rm -rf $(C_SRC_OUTPUT) $(OBJECTS) $(GCOV_OUTPUT) $(LCOV_OUTPUT) $(RAGEL_OUTPUT)
 
 check-syntax:
 	gcc $(CFLAGS) -Wextra -fsyntax-only $(CHK_SOURCES)
 
 cover: clean
+        # Compiling into goto-driven FSM is very taxing under `test-coverage`
+        # and takes ages to complete, so we recompile into table-driven FSM
+        # which is slower but compiles much faster
+	ragel -T0 sip_parser.rl -o $(RAGEL_OUTPUT)
 	$(COMPILE_C) -fprofile-arcs -ftest-coverage -o $(C_SRC_OUTPUT) $(SOURCES) $(LDFLAGS) $(LDLIBS)
 
 cover-analyze:
 	@mkdir coverage
-	- lcov --capture --directory . --output-file coverage/coverage.info \
-	  && genhtml coverage/coverage.info --output-directory coverage
+	lcov --capture --directory . --no-external --output-file coverage/coverage.info
+	genhtml coverage/coverage.info --output-directory coverage
+	lcov --list coverage/coverage.info
 
-ragel: sip_parser.c
+ragel: $(RAGEL_OUTPUT)
 
-sip_parser.c: sip_parser.rl sip_uri.rl sip_params.rl sip.rl
-	ragel -G2 sip_parser.rl -o sip_parser.c
+$(RAGEL_OUTPUT): sip_parser.rl sip_uri.rl sip_params.rl sip.rl
+	ragel -G2 sip_parser.rl -o $(RAGEL_OUTPUT)
 
 .PHONY: clean check-syntax cover cover-analyze ragel

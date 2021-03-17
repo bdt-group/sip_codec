@@ -47,6 +47,7 @@ job dialyze:
 job test:
   stage: test
   script:
+    - make d_compile
     - make d_test
   except:
     - master

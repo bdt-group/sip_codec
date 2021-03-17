@@ -137,6 +137,18 @@ decode_reason_test() ->
                {<<"text">>,<<"\"Call completed elsewhere\"">>}]}]},
        sip_codec:decode_reason(In)).
 
+tolower_test() ->
+    In = list_to_binary(lists:seq($A, $Z)),
+    Out = list_to_binary(lists:seq($a, $z)),
+    ?assertEqual(ok, sip_codec:tolower(In)),
+    ?assertEqual(Out, In).
+
+toupper_test() ->
+    In = list_to_binary(lists:seq($a, $z)),
+    Out = list_to_binary(lists:seq($A, $Z)),
+    ?assertEqual(ok, sip_codec:toupper(In)),
+    ?assertEqual(Out, In).
+
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================

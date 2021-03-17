@@ -19,7 +19,7 @@ logs
 .edts
 rebar3.crashdump
 *~
-_checkouts/helix/priv/astarta
-
+priv
+sip_parser.c
 deploy.config
 /artefacts/
