@@ -1,17 +1,19 @@
 language: erlang
 
 install:
-  - sudo apt-get -qq install ragel
+  - sudo apt-get -qq install ragel lcov
 
 before_script:
+  - cd ${TRAVIS_HOME}
   - git clone https://github.com/zinid/abnfc
   - cd abnfc
-  - make all
+  - make abnfc
   - export PATH=$PATH:$PWD
+  - cd ${TRAVIS_BUILD_DIR}
 
 otp_release:
   - 22.3
-  - 23.1
+  - 23.1.2
 
 script:
   - make compile
