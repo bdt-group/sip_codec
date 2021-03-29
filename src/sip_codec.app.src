@@ -8,5 +8,7 @@
    ]},
   {env,[]},
   {modules, []},
-  {links, []}
+  {links, []},
+  {licenses, ["Apache 2.0"]},
+  {links, [{"GitHub", "https://github.com/bdt-group/sip_codec"}]}
  ]}.

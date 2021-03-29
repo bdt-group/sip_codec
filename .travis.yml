@@ -1,0 +1,24 @@
+language: erlang
+
+install:
+  - sudo apt-get -qq install ragel
+
+before_script:
+  - git clone https://github.com/zinid/abnfc
+  - cd abnfc
+  - make all
+  - export PATH=$PATH:$PWD
+
+otp_release:
+  - 22.3
+  - 23.1
+
+script:
+  - make compile
+  - make lint
+  - make xref
+  - make dialyze
+  - make test
+
+notifications:
+  email: true

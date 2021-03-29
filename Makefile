@@ -1,6 +1,5 @@
 REBAR ?= rebar3
 PROJECT := sip_codec
-BUILD_IMAGE  ?= gitlab.bdt.tools:5000/build-ubuntu1804:1.4.6
 
 .PHONY: compile clean distclean xref dialyzer dialyze linter lint test check-syntax parser
 
@@ -36,8 +35,3 @@ check-syntax:
 
 parser:
 	make -C c_src parser
-
-.PHONY: d_%
-
-d_%:
-	./build-with-env --image $(BUILD_IMAGE) make $*
