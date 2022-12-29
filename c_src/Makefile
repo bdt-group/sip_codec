@@ -48,9 +48,11 @@ LCOV_OUTPUT = coverage
 
 COMPILE_C = $(c_verbose) $(CC) $(CFLAGS)
 
-$(C_SRC_OUTPUT): $(SOURCES) $(HEADERS)
+all: parser $(C_SRC_OUTPUT)
+
+$(C_SRC_OUTPUT): sip_parser.c $(SOURCES) $(HEADERS)
 	mkdir -p $(dir $@)
-	$(COMPILE_C) -o $(C_SRC_OUTPUT) $(SOURCES) $(LDFLAGS) $(LDLIBS)
+	$(COMPILE_C) -o $(C_SRC_OUTPUT) $(SOURCES) sip_parser.c $(LDFLAGS) $(LDLIBS)
 
 clean:
 	@rm -rf $(C_SRC_OUTPUT) $(OBJECTS) $(GCOV_OUTPUT) $(LCOV_OUTPUT) $(RAGEL_OUTPUT) $(ABNFC_OUTPUT)
@@ -80,4 +82,4 @@ $(ABNFC_OUTPUT): $(ABNF_FILES)
 $(RAGEL_OUTPUT): sip_parser.rl sip_uri.rl sip_params.rl sip.rl
 	ragel -G2 sip_parser.rl -o $(RAGEL_OUTPUT)
 
-.PHONY: clean check-syntax cover cover-analyze parser
+.PHONY: all clean check-syntax cover cover-analyze parser
