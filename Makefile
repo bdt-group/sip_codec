@@ -5,7 +5,7 @@ PROJECT := sip_codec
 
 all: compile
 
-compile: parser
+compile:
 	@$(REBAR) compile
 
 clean:
@@ -32,6 +32,3 @@ test:
 
 check-syntax:
 	make -C c_src check-syntax
-
-parser:
-	make -C c_src parser
